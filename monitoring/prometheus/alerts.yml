@@ -6,6 +6,19 @@ groups:
         for: 1m
         labels:
           severity: warning
+          alert_type: "rps"
         annotations:
           summary: "Высокий RPS на /items"
           description: "RPS > 100 для handler=/items методом GET в течение последней минуты"
+          current_value: "{{ $value }}"
+      
+      - alert: HighResponseTimeOnItems
+        expr: histogram_quantile(0.99, rate(http_request_duration_seconds_bucket{handler="/items"}[5m])) > 0.05
+        for: 2m
+        labels:
+          severity: critical
+          alert_type: "response_time"
+        annotations:
+          summary: "Высокое время ответа на /items"
+          description: "99-й перцентиль времени ответа на /items превышает 50ms в течение последних 5 минут"
+          current_value: "{{ $value }}"

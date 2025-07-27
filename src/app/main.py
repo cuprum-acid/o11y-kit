@@ -9,8 +9,13 @@ from typing import List
 import asyncio
 import time
 import httpx
+import threading
 
 app = FastAPI()
+
+# Глобальный счетчик запросов для /items
+request_counter = 0
+request_counter_lock = threading.Lock()
 
 instrumentator = Instrumentator()
 instrumentator.instrument(app).expose(app)
@@ -44,6 +49,16 @@ def create_item(item: ItemCreateUpdate, db: Session = Depends(get_db)):
 
 @app.get("/items", response_model=List[ItemResponse])
 def read_all_items(db: Session = Depends(get_db)):
+    global request_counter
+    
+    with request_counter_lock:
+        request_counter += 1
+        current_request = request_counter
+    
+    # Каждый 100-й запрос будет иметь задержку в 100ms
+    if current_request % 100 == 0:
+        time.sleep(0.1)  # 100ms задержка для каждого 100-го запроса
+    
     return db.query(models.Item).all()
 
 

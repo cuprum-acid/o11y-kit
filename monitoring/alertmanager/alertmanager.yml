@@ -6,6 +6,16 @@ route:
   group_wait: 10s
   group_interval: 30s
   repeat_interval: 30m
+  group_by: ['alertname']
+  routes:
+    - match:
+        alertname: HighRPSOnItems
+      receiver: telegram
+      group_by: ['alertname']
+    - match:
+        alertname: HighResponseTimeOnItems
+      receiver: telegram
+      group_by: ['alertname']
 
 receivers:
   - name: telegram
@@ -18,3 +28,5 @@ receivers:
           *Summary:* {{ .CommonAnnotations.summary }}
           *Description:* {{ .CommonAnnotations.description }}
           *Severity:* {{ .CommonLabels.severity }}
+          *Current Value:* {{ .CommonAnnotations.current_value }}
+          *Status:* {{ .Status }}
