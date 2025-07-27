@@ -1,0 +1,11 @@
+groups:
+  - name: http-alerts
+    rules:
+      - alert: HighRPSOnItems
+        expr: rate(http_request_duration_seconds_count{handler="/items", method="GET"}[1m]) > 100
+        for: 1m
+        labels:
+          severity: warning
+        annotations:
+          summary: "Высокий RPS на /items"
+          description: "RPS > 100 для handler=/items методом GET в течение последней минуты"

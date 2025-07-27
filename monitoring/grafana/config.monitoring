@@ -1,0 +1,23 @@
+[server]
+domain = localhost
+root_url = %(protocol)s://%(domain)s:%(http_port)s/
+
+[analytics]
+reporting_enabled = false
+check_for_updates = false
+
+[auth]
+disable_login_form = false
+disable_signout_menu = false
+
+[auth.anonymous]
+enabled = true
+org_role = Viewer
+
+[users]
+allow_sign_up = false
+auto_assign_org = true
+auto_assign_org_role = Viewer
+
+[panels]
+disable_sanitize_html = true
